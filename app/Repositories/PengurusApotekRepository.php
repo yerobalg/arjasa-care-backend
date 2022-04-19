@@ -32,4 +32,20 @@ class PengurusApotekRepository implements PengurusApotekInterface
   {
     $pengurus->delete();
   }
+
+  public function getKaryawan($page)
+  {
+    $offset = ($page - 1) * 10;
+    $data = PengurusApotek::where('is_karyawan', 1)
+      ->offset($offset)->limit(10)->get();
+
+    $total = PengurusApotek::where('is_karyawan', 1)->count();
+
+    return [
+      'data' => $data,
+      'currentPage' => $page,
+      'totalPage' => ceil($total / 10),
+      'totalData' => $total
+    ];
+  }
 }

@@ -41,11 +41,6 @@ class PengurusApotek extends Model implements AuthenticatableContract, Authoriza
      */
     public function getJWTCustomClaims()
     {
-        return [
-            "id" => $this->id,
-            "username" => $this->username, 
-            "fullname" => $this->fullname, 
-            "is_karyawan" => $this->is_karyawan
-        ];
+        return [];
     }
 } 

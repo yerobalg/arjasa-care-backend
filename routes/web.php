@@ -23,6 +23,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
         $router->group(['prefix' => 'karyawan'], function () use ($router) {
             $router->post('/', 'PengurusApotekController@createKaryawan');
             $router->get('/profil', 'PengurusApotekController@profil');
+            $router->put('/profil', 'PengurusApotekController@updateProfil');
+            $router->delete('/{username}', 'PengurusApotekController@deleteKaryawan');
+            $router->get('/', 'PengurusApotekController@getKaryawan');
         });
     });
 });

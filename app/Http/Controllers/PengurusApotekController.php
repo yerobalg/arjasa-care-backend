@@ -18,9 +18,9 @@ class PengurusApotekController extends Controller
 
     public function createKaryawan(Request $request)
     {
-        $user = $request->get('karyawan');
+        $user = auth()->user();
 
-        if ($user["is_karyawan"] == 1)
+        if ($user->is_karyawan == 1)
             return $this->unauthorized();
 
         $data = $request->all();
@@ -29,7 +29,9 @@ class PengurusApotekController extends Controller
             "username" => "required|string|unique:pengurus_apotek|min:5|max:20|regex:/^\S*$/u",
             "password" => [
                 'required',
-                'string', 'max:32',
+                'string',
+                'max:32',
+                'regex:/^\S*$/u',
                 Password::min(8)->letters()->numbers()
             ],
         ]);
@@ -126,12 +128,55 @@ class PengurusApotekController extends Controller
             );
         }
 
-        $user = $this->pengurus->updateProfil(auth()->user(), $data);
+        $karyawan = auth()->user();
+
+        $user = $this->pengurus->updateProfil($karyawan, $data);
 
         return $this->formatResponse(
             "Profil berhasil diubah",
             $user,
             200
+        );
+    }
+
+    public function deleteKaryawan($username)
+    {
+        $user = auth()->user();
+
+        if ($user->is_karyawan == 1)
+            return $this->unauthorized();
+
+        $karyawan = $this->pengurus->getByUsername($username);
+
+        if (!$karyawan)
+            return $this->formatResponse(
+                "Karyawan tidak ditemukan",
+                null,
+                404
+            );
+
+        $this->pengurus->delete($karyawan);
+
+        return $this->formatResponse(
+            "Karyawan berhasil dihapus",
+            $karyawan,
+            200
+        );
+    }
+
+    public function getKaryawan(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user->is_karyawan == 1)
+            return $this->unauthorized();
+
+        $page = (int)$request->query('page', 1);
+        $karyawan = $this->pengurus->getKaryawan($page);
+
+        return $this->formatResponse(
+            "Berhasil mengambil karyawan",
+            $karyawan
         );
     }
 }

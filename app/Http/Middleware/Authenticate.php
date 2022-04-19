@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Authenticate
 {
@@ -42,20 +41,6 @@ class Authenticate
                 "success" => false,
                 "data" => null
             ], 401);
-        
-        $payload = JWTAuth::getPayload(JWTAuth::getToken())->toArray();
-        // $request["karyawan"] = [
-        //     "id" => $payload["id"],
-        //     "username" => $payload["username"],
-        //     "fullname" => $payload["fullname"],
-        //     "is_karyawan" => $payload["is_karyawan"]
-        // ];
-        $request->attributes->add(["karyawan" => [
-            "id" => $payload["id"],
-            "username" => $payload["username"],
-            "fullname" => $payload["fullname"],
-            "is_karyawan" => $payload["is_karyawan"]
-        ]]);
 
         return $next($request);
     }
