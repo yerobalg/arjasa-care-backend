@@ -8,7 +8,6 @@ class Controller extends BaseController
 {
     protected function formatResponse($message, $data, $code = 200)
     {
-        error_log("Unauthorized access 2");
         return response()->json([
             'message' => $message,
             'success' => floor($code / 100) == 2,
