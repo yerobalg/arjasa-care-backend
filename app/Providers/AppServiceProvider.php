@@ -15,7 +15,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(
             'App\Interfaces\PengurusApotekInterface',
-            'App\Repositories\PengurusApotekRepository'
+            'App\Repositories\PengurusApotekRepository',
+        );
+        $this->app->bind(
+            'App\Interfaces\PelangganInterface',
+            'App\Repositories\PelangganRepository',
         );
     }
 }

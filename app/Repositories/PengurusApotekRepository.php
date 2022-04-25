@@ -7,11 +7,6 @@ use App\Models\PengurusApotek;
 
 class PengurusApotekRepository implements PengurusApotekInterface
 {
-  public function getAll()
-  {
-    return PengurusApotek::all();
-  }
-
   public function getByUsername($username)
   {
     return PengurusApotek::where('username', $username)->first();
