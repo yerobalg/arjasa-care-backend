@@ -40,6 +40,21 @@ class PelangganRepository implements PelangganInterface
 
   public function getByNomorHP($nomorHp)
   {
-    
+    return Pelanggan::where('nomor_hp', $nomorHp)->first();
+  }
+
+  public function create($data)
+  {
+    return Pelanggan::create($data);
+  }
+
+  public function update(Pelanggan $pelanggan, $data) {
+    $pelanggan->update($data);
+    return $pelanggan;
+  }
+
+  public function delete(Pelanggan $pelanggan) 
+  {
+    $pelanggan->delete();
   }
 }
