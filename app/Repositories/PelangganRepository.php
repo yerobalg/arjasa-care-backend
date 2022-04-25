@@ -38,9 +38,9 @@ class PelangganRepository implements PelangganInterface
     ];
   }
 
-  public function getByNomorHP($nomorHp)
+  public function getById($id)
   {
-    return Pelanggan::where('nomor_hp', $nomorHp)->first();
+    return Pelanggan::find($id);
   }
 
   public function create($data)
