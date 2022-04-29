@@ -1,7 +1,10 @@
 <?php
 
+namespace App\Repositories;
+
 use App\Interfaces\PelangganInterface;
 use App\Models\Pelanggan;
+use App\Illuminate\Support\Facades\DB;
 
 class PelangganRepository implements PelangganInterface
 {
@@ -11,20 +14,16 @@ class PelangganRepository implements PelangganInterface
 
     if ($keyword != '') {
       $keyword = strtolower($keyword);
-      $pelanggan = Pelanggan::where(
-        'lower(nama)',
-        'like',
-        '%' . $keyword . '%'
-      )
-        ->orWhere('lower(nomor_hp)', 'like', '%' . $keyword . '%')
-        ->offset($offset)->limit(10)->get();
-      $total = Pelanggan::where(
-        'lower(nama)',
-        'like',
-        '%' . $keyword . '%'
-      )
-        ->orWhere('lower(nomor_hp)', 'like', '%' . $keyword . '%')
-        ->count();
+      $pelanggan =Pelanggan::whereRaw(
+        "lower(nama) like '%$keyword%'"
+      )->orWhereRaw(
+        "nomor_hp like '%$keyword%'"
+      )->offset($offset)->limit(10)->get();
+      $total = Pelanggan::whereRaw(
+        "lower(nama) like '%$keyword%'"
+      )->orWhereRaw(
+        "nomor_hp like '%$keyword%'"
+      )->count();
     } else {
       $pelanggan = Pelanggan::offset($offset)->limit(10)->get();
       $total = Pelanggan::count();
@@ -48,12 +47,13 @@ class PelangganRepository implements PelangganInterface
     return Pelanggan::create($data);
   }
 
-  public function update(Pelanggan $pelanggan, $data) {
+  public function update(Pelanggan $pelanggan, $data)
+  {
     $pelanggan->update($data);
     return $pelanggan;
   }
 
-  public function delete(Pelanggan $pelanggan) 
+  public function delete(Pelanggan $pelanggan)
   {
     $pelanggan->delete();
   }

@@ -17,7 +17,7 @@ class PelangganController extends Controller
 
     public function getPelanggan(Request $request)
     {
-        $page = $request->query('page', 1);
+        $page = (int) $request->query('page', 1);
         $keyword = $request->query('keyword', '');
 
         $data = $this->pelanggan->getPelanggan($page, $keyword);
@@ -29,7 +29,7 @@ class PelangganController extends Controller
         );
     }
 
-    public function getPellangan($id) {
+    public function getPelangganById($id) {
         $pelanggan = $this->pelanggan->getById($id);
         if (!$pelanggan) {
             return $this->formatResponse(
@@ -52,7 +52,7 @@ class PelangganController extends Controller
 
         $validator = Validator::make($data, [
             "nama" => "required|string",
-            "nomor_hp" => "required|string|unique:pelanggan|min:10|max:13|numeric",
+            "nomor_hp" => "required|string|unique:pelanggan|numeric|digits_between:10,15",
             "alamat" => "required|string",
         ]);
 
@@ -73,12 +73,12 @@ class PelangganController extends Controller
         );
     }
 
-    public function update (Request $request) {
+    public function update ($id, Request $request) {
         $data = $request->all();
 
         $validator = Validator::make($data, [
             "nama" => "required|string",
-            "nomor_hp" => "required|string|min:10|max:13|numeric",
+            "nomor_hp" => "required|string|numeric|digits_between:10,15",
             "alamat" => "required|string",
         ]);
 
@@ -90,7 +90,7 @@ class PelangganController extends Controller
             );
         }
 
-        $pelanggan = $this->pelanggan->getById($request->id);
+        $pelanggan = $this->pelanggan->getById($id);
         if(!$pelanggan) 
             return $this->formatResponse(
                 "Pelanggan tidak ditemukan",
@@ -107,5 +107,22 @@ class PelangganController extends Controller
         );
     }
 
-    
+    public function delete ($id) {
+        $pelanggan = $this->pelanggan->getById($id);
+        if (!$pelanggan) {
+            return $this->formatResponse(
+                'Pelanggan tidak ditemukan',
+                null,
+                404
+            );
+        }
+
+        $this->pelanggan->delete($pelanggan);
+
+        return $this->formatResponse(
+            'Pelanggan berhasil dihapus',
+            null,
+            200
+        );
+    }
 }

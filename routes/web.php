@@ -27,5 +27,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
             $router->delete('/{username}', 'PengurusApotekController@deleteKaryawan');
             $router->get('/', 'PengurusApotekController@getKaryawan');
         });
+        $router->group(['prefix' => 'pelanggan'], function () use ($router) {
+            $router->get('/', 'PelangganController@getPelanggan');
+            $router->get('/{id}', 'PelangganController@getPelangganById');
+            $router->post('/', 'PelangganController@create');
+            $router->put('/{id}', 'PelangganController@update');
+            $router->delete('/{id}', 'PelangganController@delete');
+        });
     });
 });
