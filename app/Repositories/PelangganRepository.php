@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Interfaces\PelangganInterface;
 use App\Models\Pelanggan;
-use App\Illuminate\Support\Facades\DB;
 
 class PelangganRepository implements PelangganInterface
 {
@@ -14,7 +13,8 @@ class PelangganRepository implements PelangganInterface
 
     if ($keyword != '') {
       $keyword = strtolower($keyword);
-      $pelanggan =Pelanggan::whereRaw(
+      $pelanggan = Pelanggan::with('pengurusApotek:id,username')
+      ->whereRaw(
         "lower(nama) like '%$keyword%'"
       )->orWhereRaw(
         "nomor_hp like '%$keyword%'"
@@ -39,7 +39,9 @@ class PelangganRepository implements PelangganInterface
 
   public function getById($id)
   {
-    return Pelanggan::find($id);
+    return Pelanggan::with('pengurusApotek:id,username')
+      ->with('transaksi')
+      ->find($id);
   }
 
   public function create($data)

@@ -17,8 +17,13 @@ class Transaksi extends Model
      * @var array
      */
     protected $fillable = [
-        'keluhan', 'saran', 'nama_obat'
+        'keluhan', 'saran', 'nama_obat', 'id_pelanggan'
     ];
 
     protected $hidden = ['deleted_at'];
+
+    public function pelanggan() 
+    {
+        return $this->belongsTo(Pelanggan::class, 'id_pelanggan');
+    }
 }

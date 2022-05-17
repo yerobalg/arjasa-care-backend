@@ -17,8 +17,18 @@ class Pelanggan extends Model
      * @var array
      */
     protected $fillable = [
-        'nama', 'nomor_hp', 'alamat'
+        'nama', 'nomor_hp', 'alamat', 'id_pengurus'
     ];
 
     protected $hidden = ['deleted_at'];
+
+    public function pengurusApotek() 
+    {
+        return $this->belongsTo(PengurusApotek::class, 'id_pengurus');
+    }
+
+    public function transaksi() 
+    {
+        return $this->hasMany(Transaksi::class, 'id_pelanggan');
+    }
 }

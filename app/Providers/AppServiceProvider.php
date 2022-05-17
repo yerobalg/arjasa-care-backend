@@ -21,5 +21,9 @@ class AppServiceProvider extends ServiceProvider
             'App\Interfaces\PelangganInterface',
             'App\Repositories\PelangganRepository',
         );
+        $this->app->bind(
+            'App\Interfaces\TransaksiInterface',
+            'App\Repositories\TransaksiRepository',
+        );
     }
 }

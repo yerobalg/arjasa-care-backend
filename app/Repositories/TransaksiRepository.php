@@ -2,15 +2,16 @@
 
 namespace App\Repositories;
 
-//use App\Interfaces\PelangganInterface;
+use App\Interfaces\TransaksiInterface;
 use App\Models\Transaksi;
 
-class TransaksiRepository
+class TransaksiRepository implements TransaksiInterface
 {
   public function getTransaksi($page)
   {
     $offset = ($page - 1) * 25;
-    $data = Transaksi::orderBy("created_at", "desc")
+    $data = Transaksi::with('pelanggan:id,nama,nomor_hp')
+      ->orderBy("created_at", "desc")
       ->offset($offset)->limit(25)->get();
 
     $total = Transaksi::orderBy("created_at", "desc")
@@ -26,7 +27,7 @@ class TransaksiRepository
 
   public function getById($id)
   {
-    return Transaksi::find($id);
+    return Transaksi::with('pelanggan:id,nama,nomor_hp')->find($id);
   }
 
   public function create($data)

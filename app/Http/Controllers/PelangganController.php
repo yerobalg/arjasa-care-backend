@@ -64,6 +64,8 @@ class PelangganController extends Controller
             );
         }
 
+        $data['id_pengurus'] = auth()->user()->id;
+
         $pelanggan = $this->pelanggan->create($data);
 
         return $this->formatResponse(
@@ -97,6 +99,8 @@ class PelangganController extends Controller
                 null,
                 404
             );
+
+        $data['id_pengurus'] = auth()->user()->id;
         
         $pelanggan = $this->pelanggan->update($pelanggan, $data);
 

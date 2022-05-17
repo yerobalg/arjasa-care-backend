@@ -34,5 +34,12 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
             $router->put('/{id}', 'PelangganController@update');
             $router->delete('/{id}', 'PelangganController@delete');
         });
+        $router->group(['prefix' => 'transaksi'], function () use ($router) {
+            $router->get('/', 'TransaksiController@getTransaksi');
+            $router->get('/{id}', 'TransaksiController@getTransaksiById');
+            $router->post('/{id}', 'TransaksiController@create');
+            $router->put('/{id}', 'TransaksiController@update');
+            $router->delete('/{id}', 'TransaksiController@delete');
+        });
     });
 });

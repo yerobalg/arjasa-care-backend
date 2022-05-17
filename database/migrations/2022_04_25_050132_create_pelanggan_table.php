@@ -18,6 +18,8 @@ class CreatePelangganTable extends Migration
             $table->string('nomor_hp')->unique();
             $table->string('nama');
             $table->text('alamat');
+            $table->unsignedBigInteger('id_pengurus');
+            $table->foreign('id_pengurus')->references('id')->on('pengurus_apotek');
             $table->timestamps();
             $table->softDeletes();
         });

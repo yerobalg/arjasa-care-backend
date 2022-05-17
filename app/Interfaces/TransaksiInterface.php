@@ -3,7 +3,7 @@
 namespace App\Interfaces;
 use App\Models\Transaksi;
 
-interface PelangganInterface {
+interface TransaksiInterface {
   public function getById($id);
   public function create($data);
   public function update(Transaksi $transaksi, $data);

@@ -18,6 +18,8 @@ class CreateTransaksiPelangganTable extends Migration
             $table->text('keluhan');
             $table->text('saran');
             $table->text('nama_obat');
+            $table->unsignedBigInteger('id_pelanggan');
+            $table->foreign('id_pelanggan')->references('id')->on('pelanggan');
             $table->timestamps();
             $table->softDeletes();
         });
