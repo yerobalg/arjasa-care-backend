@@ -15,9 +15,10 @@ class CreateTransaksiPelangganTable extends Migration
     {
         Schema::create('transaksi_pelanggan', function (Blueprint $table) {
             $table->id();
-            $table->text('keluhan');
-            $table->text('saran');
+            $table->text('keluhan')->nullable();
+            $table->text('saran')->nullable();
             $table->text('nama_obat');
+            $table->string('alergi')->nullable();
             $table->unsignedBigInteger('id_pelanggan');
             $table->foreign('id_pelanggan')->references('id')->on('pelanggan');
             $table->timestamps();

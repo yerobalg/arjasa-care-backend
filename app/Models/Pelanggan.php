@@ -16,8 +16,9 @@ class Pelanggan extends Model
      *
      * @var array
      */
+    
     protected $fillable = [
-        'nama', 'nomor_hp', 'alamat', 'id_pengurus'
+        'nama', 'nomor_hp', 'alamat', 'id_pengurus', 'tanda_tangan'
     ];
 
     protected $hidden = ['deleted_at'];

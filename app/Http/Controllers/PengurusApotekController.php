@@ -34,14 +34,13 @@ class PengurusApotekController extends Controller
                 'regex:/^\S*$/u',
                 Password::min(8)->letters()->numbers()
             ],
+            "is_karyawan" => "required|boolean",
         ]);
 
         $data['password'] = Hash::make(
             $data['password'],
             ['rounds' => env('PASSWORD_ROUND')]
         );
-
-        $data['is_karyawan'] = true;
 
         if ($validator->fails()) {
             return $this->formatResponse(

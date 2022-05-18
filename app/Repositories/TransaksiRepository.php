@@ -7,22 +7,19 @@ use App\Models\Transaksi;
 
 class TransaksiRepository implements TransaksiInterface
 {
-  public function getTransaksi($page)
+  public function getTransaksi($keyword)
   {
-    $offset = ($page - 1) * 25;
-    $data = Transaksi::with('pelanggan:id,nama,nomor_hp')
-      ->orderBy("created_at", "desc")
-      ->offset($offset)->limit(25)->get();
+    if ($keyword === '')
+      $data = Transaksi::with('pelanggan:id,nama,nomor_hp')
+        ->orderBy("created_at", "desc");
+    else
+      $data = Transaksi::with('pelanggan:id,nama,nomor_hp')
+        ->where('id_pelanggan', 'like', '%' . $keyword . '%')
+        ->orWhere('id_pelanggan', 'like', '%' . $keyword . '%')
+        ->orderBy("created_at", "desc");
 
-    $total = Transaksi::orderBy("created_at", "desc")
-      ->offset($offset)->limit(25)->count();
 
-    return [
-      'data' => $data,
-      'currentPage' => $page,
-      'totalPage' => ceil($total / 25),
-      'totalData' => $total
-    ];
+    return $data->get();
   }
 
   public function getById($id)
@@ -33,16 +30,5 @@ class TransaksiRepository implements TransaksiInterface
   public function create($data)
   {
     return Transaksi::create($data);
-  }
-
-  public function update(Transaksi $transaksi, $data)
-  {
-    $transaksi->update($data);
-    return $transaksi;
-  }
-
-  public function delete(Transaksi $transaksi)
-  {
-    $transaksi->delete();
   }
 }

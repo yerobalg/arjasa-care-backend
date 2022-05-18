@@ -5,14 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Interfaces\PelangganInterface;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 
-class PelangganController extends Controller 
+
+class PelangganController extends Controller
 {
     private $pelanggan;
     public function __construct(PelangganInterface $pelanggan)
     {
         $this->pelanggan = $pelanggan;
+    }
+
+    private function tandaTanganFormatter($ttd, $host)
+    {
+        return "{$host}/public/images/tanda_tangan/{$ttd}";
     }
 
     public function getPelanggan(Request $request)
@@ -29,7 +36,8 @@ class PelangganController extends Controller
         );
     }
 
-    public function getPelangganById($id) {
+    public function getPelangganById($id, Request $request)
+    {
         $pelanggan = $this->pelanggan->getById($id);
         if (!$pelanggan) {
             return $this->formatResponse(
@@ -68,6 +76,29 @@ class PelangganController extends Controller
 
         $pelanggan = $this->pelanggan->create($data);
 
+        if ($request->hasFile('tanda_tangan')) {
+            $file = $request->file('tanda_tangan');
+
+            $allowedExtensions = ["jpg", "jpeg", "png"];
+            $fileExtension = $file->getClientOriginalExtension();
+            $fileExtension = pathinfo($fileExtension, PATHINFO_FILENAME);
+
+            if (!in_array($fileExtension, $allowedExtensions))
+                return $this->formatResponse(
+                    "File harus berupa gambar dengan ekstensi jpg, jpeg, atau png",
+                    null,
+                    422
+                );
+
+            $name = time() . "_{$pelanggan['id']}." . $fileExtension;
+            $file->storeAs('tanda_tangan', $name);
+
+            $data['tanda_tangan'] = $name;
+        }
+
+        if ($pelanggan['tanda_tangan'])
+            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($pelanggan['tanda_tangan'], $request->getHost());
+
         return $this->formatResponse(
             'Pelanggan berhasil ditambahkan',
             $pelanggan,
@@ -75,8 +106,11 @@ class PelangganController extends Controller
         );
     }
 
-    public function update ($id, Request $request) {
+    public function update($id, Request $request)
+    {
         $data = $request->all();
+
+        Log::info(json_encode($request->all()));
 
         $validator = Validator::make($data, [
             "nama" => "required|string",
@@ -93,16 +127,39 @@ class PelangganController extends Controller
         }
 
         $pelanggan = $this->pelanggan->getById($id);
-        if(!$pelanggan) 
+        if (!$pelanggan)
             return $this->formatResponse(
                 "Pelanggan tidak ditemukan",
                 null,
                 404
             );
 
+        if ($request->hasFile('tanda_tangan')) {
+            $file = $request->file('tanda_tangan');
+
+            $allowedExtensions = ["jpg", "jpeg", "png"];
+            $fileExtension = $file->getClientOriginalExtension();
+            $fileExtension = pathinfo($fileExtension, PATHINFO_FILENAME);
+
+            if (!in_array($fileExtension, $allowedExtensions))
+                return $this->formatResponse(
+                    "File harus berupa gambar dengan ekstensi jpg, jpeg, atau png",
+                    null,
+                    422
+                );
+
+            $name = time() . "_{$pelanggan['id']}." . $fileExtension;
+            $file->storeAs('tanda_tangan', $name);
+
+            $data['tanda_tangan'] = $name;
+        }
+
         $data['id_pengurus'] = auth()->user()->id;
-        
+
         $pelanggan = $this->pelanggan->update($pelanggan, $data);
+
+        if ($pelanggan['tanda_tangan'])
+            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($pelanggan['tanda_tangan'], $request->getHost());
 
         return $this->formatResponse(
             'Pelanggan berhasil diubah',
@@ -111,7 +168,8 @@ class PelangganController extends Controller
         );
     }
 
-    public function delete ($id) {
+    public function delete($id)
+    {
         $pelanggan = $this->pelanggan->getById($id);
         if (!$pelanggan) {
             return $this->formatResponse(

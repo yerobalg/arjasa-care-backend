@@ -13,6 +13,8 @@
 |
 */
 
+//to run server: php -S localhost:8000 -t public
+
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
@@ -31,7 +33,7 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) {
             $router->get('/', 'PelangganController@getPelanggan');
             $router->get('/{id}', 'PelangganController@getPelangganById');
             $router->post('/', 'PelangganController@create');
-            $router->put('/{id}', 'PelangganController@update');
+            $router->post('/{id}', 'PelangganController@update');
             $router->delete('/{id}', 'PelangganController@delete');
         });
         $router->group(['prefix' => 'transaksi'], function () use ($router) {
