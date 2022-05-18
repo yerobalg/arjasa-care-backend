@@ -3,11 +3,12 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class DatabaseSeeder extends Seeder
+
+
+class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,8 +22,8 @@ class DatabaseSeeder extends Seeder
             'fullname' => "Admin Arjasa",
             'password' => Hash::make(env('ADMIN_PASSWORD')),
             'is_karyawan' => false,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'created_at' => 'CURRENT_TIMESTAMP',
+            'updated_at' => 'CURRENT_TIMESTAMP',
         ]);
     }
 }
