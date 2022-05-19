@@ -94,10 +94,11 @@ class PelangganController extends Controller
             $file->storeAs('tanda_tangan', $name);
 
             $data['tanda_tangan'] = $name;
+            $this->pelanggan->update($pelanggan, $data);
         }
 
         if ($pelanggan['tanda_tangan'])
-            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($pelanggan['tanda_tangan'], $request->getHost());
+            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($name, $request->getHost());
 
         return $this->formatResponse(
             'Pelanggan berhasil ditambahkan',
@@ -159,7 +160,7 @@ class PelangganController extends Controller
         $pelanggan = $this->pelanggan->update($pelanggan, $data);
 
         if ($pelanggan['tanda_tangan'])
-            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($pelanggan['tanda_tangan'], $request->getHost());
+            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($name, $request->getHost());
 
         return $this->formatResponse(
             'Pelanggan berhasil diubah',

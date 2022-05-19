@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Interfaces\TransaksiInterface;
 use Illuminate\Support\Facades\Validator;
 
-
 class TransaksiController extends Controller
 {
     private $transaksi;
@@ -17,10 +16,9 @@ class TransaksiController extends Controller
 
     public function getTransaksi(Request $request)
     {
-        $page = (int) $request->query('page', 1);
         $keyword = $request->query('keyword', '');
 
-        $data = $this->transaksi->getTransaksi($page);
+        $data = $this->transaksi->getTransaksi($keyword);
 
         return $this->formatResponse(
             'Berhasil mengambil seluruh transaksi',
@@ -31,7 +29,7 @@ class TransaksiController extends Controller
 
     public function getTransaksiById($id)
     {
-        $transaksi = $this->transaksi->getById($id);
+        $transaksi = $this->transaksi->getByIdPelanggan($id);
         if (!$transaksi) {
             return $this->formatResponse(
                 'Transaksi tidak ditemukan',
@@ -52,10 +50,10 @@ class TransaksiController extends Controller
         $data = $request->all();
 
         $validator = Validator::make($data, [
-            "keluhan" => "required|string",
-            "saran" => "required|string",
+            "keluhan" => "string",
+            "saran" => "string",
             "nama_obat" => "required|string",
-            "alergi" => "required|string",
+            "alergi" => "string",
         ]);
 
         if ($validator->fails()) {
@@ -65,8 +63,6 @@ class TransaksiController extends Controller
                 422
             );
         }
-
-        
 
         $data['id_pelanggan'] = $id;
 
@@ -76,61 +72,6 @@ class TransaksiController extends Controller
             'Transaksi berhasil ditambahkan',
             $transaksi,
             201
-        );
-    }
-
-    public function update($id, Request $request)
-    {
-        $data = $request->all();
-
-        $validator = Validator::make($data, [
-            "keluhan" => "required|string",
-            "saran" => "required|string",
-            "nama_obat" => "required|string",
-        ]);
-
-        if ($validator->fails()) {
-            return $this->formatResponse(
-                "Validasi gagal",
-                $validator->errors(),
-                422
-            );
-        }
-
-        $transaksi = $this->transaksi->getById($id);
-        if (!$transaksi)
-            return $this->formatResponse(
-                "Transaksi tidak ditemukan",
-                null,
-                404
-            );
-
-        $transaksi = $this->transaksi->update($transaksi, $data);
-
-        return $this->formatResponse(
-            'Transaksi berhasil diubah',
-            $transaksi,
-            200
-        );
-    }
-
-    public function delete($id)
-    {
-        $transaksi = $this->transaksi->getById($id);
-        if (!$transaksi) {
-            return $this->formatResponse(
-                'Transaksi tidak ditemukan',
-                null,
-                404
-            );
-        }
-
-        $this->transaksi->delete($transaksi);
-
-        return $this->formatResponse(
-            'Transaksi berhasil dihapus',
-            null,
-            200
         );
     }
 }

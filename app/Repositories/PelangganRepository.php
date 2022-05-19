@@ -23,7 +23,7 @@ class PelangganRepository implements PelangganInterface
           'ilike',
           "%{$keyword}%"
         )->offset($offset)->limit(10)->get();
-      $total =  $pelanggan = Pelanggan::with('pengurusApotek:id,username')
+      $total = Pelanggan::with('pengurusApotek:id,username')
         ->where(
           'nama',
           'ilike',

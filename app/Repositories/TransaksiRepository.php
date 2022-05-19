@@ -14,17 +14,19 @@ class TransaksiRepository implements TransaksiInterface
         ->orderBy("created_at", "desc");
     else
       $data = Transaksi::with('pelanggan:id,nama,nomor_hp')
-        ->where('id_pelanggan', 'like', '%' . $keyword . '%')
-        ->orWhere('id_pelanggan', 'like', '%' . $keyword . '%')
+        ->where('keluhan', 'ilike', "%{$keyword}%")
+        ->orWhere('nama_obat', 'ilike', "%{$keyword}%")
         ->orderBy("created_at", "desc");
 
 
     return $data->get();
   }
 
-  public function getById($id)
+  public function getByIdPelanggan($id)
   {
-    return Transaksi::with('pelanggan:id,nama,nomor_hp')->find($id);
+    return Transaksi::with('pelanggan:id,nama,nomor_hp')
+      ->where('id_pelanggan', $id)
+      ->get();
   }
 
   public function create($data)
