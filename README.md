@@ -7,6 +7,7 @@
 composer install
 php artisan migrate
 php artisan db:seed
+php -S localhost:8000 -t public
 ```
-4. Akses API login dengan username admin_arjasa dan password yang telah di set di .env
-5. Simpan token login untuk mengakses API lainnya
+5. Akses API login dengan username admin_arjasa dan password yang telah di set di .env
+6. Simpan token login untuk mengakses API lainnya
