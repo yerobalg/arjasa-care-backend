@@ -19,7 +19,9 @@ class PelangganController extends Controller
 
     private function tandaTanganFormatter($ttd, $host)
     {
-        return "{$host}/public/images/tanda_tangan/{$ttd}";
+        $host = explode(':', $host);
+        $url = "{$host[0]}:{$host[1]}";
+        return "{$url}/public/images/tanda_tangan/{$ttd}";
     }
 
     public function getPelanggan(Request $request)
@@ -28,6 +30,13 @@ class PelangganController extends Controller
         $keyword = $request->query('keyword', '');
 
         $data = $this->pelanggan->getPelanggan($page, $keyword);
+
+        foreach ($data["data"] as $value)
+            $value->tanda_tangan = $this
+                ->tandaTanganFormatter(
+                    $value->tanda_tangan,
+                    $request->getSchemeAndHttpHost()
+                );
 
         return $this->formatResponse(
             'Berhasil mengambil pelanggan',
@@ -46,6 +55,13 @@ class PelangganController extends Controller
                 404
             );
         }
+
+        if ($pelanggan->tanda_tangan)
+            $pelanggan->tanda_tangan = $this
+                ->tandaTanganFormatter(
+                    $pelanggan->tanda_tangan,
+                    $request->getSchemeAndHttpHost()
+                );
 
         return $this->formatResponse(
             'Berhasil mengambil pelanggan',
@@ -94,11 +110,15 @@ class PelangganController extends Controller
             $file->storeAs('tanda_tangan', $name);
 
             $data['tanda_tangan'] = $name;
-            $this->pelanggan->update($pelanggan, $data);
+            $pelanggan = $this->pelanggan->update($pelanggan, $data);
         }
 
         if ($pelanggan['tanda_tangan'])
-            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($name, $request->getHost());
+            $pelanggan['tanda_tangan'] =  $this
+                ->tandaTanganFormatter(
+                    $pelanggan->tanda_tangan,
+                    $request->getSchemeAndHttpHost()
+                );
 
         return $this->formatResponse(
             'Pelanggan berhasil ditambahkan',
@@ -109,13 +129,24 @@ class PelangganController extends Controller
 
     public function update($id, Request $request)
     {
+
+        $pelanggan = $this->pelanggan->getById($id);
+        if (!$pelanggan)
+            return $this->formatResponse(
+                "Pelanggan tidak ditemukan",
+                null,
+                404
+            );
+
+
         $data = $request->all();
 
-        Log::info(json_encode($request->all()));
+        if ($data["nomor_hp"] == $pelanggan["nomor_hp"])
+            unset($data["nomor_hp"]);
 
         $validator = Validator::make($data, [
             "nama" => "required|string",
-            "nomor_hp" => "required|string|numeric|digits_between:10,15",
+            "nomor_hp" => "unique:pelanggan|string|numeric|digits_between:10,15",
             "alamat" => "required|string",
         ]);
 
@@ -127,13 +158,7 @@ class PelangganController extends Controller
             );
         }
 
-        $pelanggan = $this->pelanggan->getById($id);
-        if (!$pelanggan)
-            return $this->formatResponse(
-                "Pelanggan tidak ditemukan",
-                null,
-                404
-            );
+
 
         if ($request->hasFile('tanda_tangan')) {
             $file = $request->file('tanda_tangan');
@@ -160,7 +185,11 @@ class PelangganController extends Controller
         $pelanggan = $this->pelanggan->update($pelanggan, $data);
 
         if ($pelanggan['tanda_tangan'])
-            $pelanggan['tanda_tangan'] = $this->tandaTanganFormatter($name, $request->getHost());
+            $pelanggan['tanda_tangan'] = $this
+                ->tandaTanganFormatter(
+                    $pelanggan['tanda_tangan'],
+                    $request->getSchemeAndHttpHost()
+                );
 
         return $this->formatResponse(
             'Pelanggan berhasil diubah',
