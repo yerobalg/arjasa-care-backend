@@ -19,9 +19,7 @@ class PelangganController extends Controller
 
     private function tandaTanganFormatter($ttd, $host)
     {
-        $host = explode(':', $host);
-        $url = "{$host[0]}:{$host[1]}";
-        return "{$url}/public/images/tanda_tangan/{$ttd}";
+        return "{$host}/public/images/tanda-tangan/{$ttd}";
     }
 
     public function getPelanggan(Request $request)
@@ -97,7 +95,6 @@ class PelangganController extends Controller
 
             $allowedExtensions = ["jpg", "jpeg", "png"];
             $fileExtension = $file->getClientOriginalExtension();
-            $fileExtension = pathinfo($fileExtension, PATHINFO_FILENAME);
 
             if (!in_array($fileExtension, $allowedExtensions))
                 return $this->formatResponse(
@@ -107,7 +104,7 @@ class PelangganController extends Controller
                 );
 
             $name = time() . "_{$pelanggan['id']}." . $fileExtension;
-            $file->storeAs('tanda_tangan', $name);
+            $file->move('tanda-tangan', $name);
 
             $data['tanda_tangan'] = $name;
             $pelanggan = $this->pelanggan->update($pelanggan, $data);
