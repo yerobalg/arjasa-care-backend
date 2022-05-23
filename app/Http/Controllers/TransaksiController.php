@@ -19,10 +19,17 @@ class TransaksiController extends Controller
         $keyword = $request->query('keyword', '');
 
         $data = $this->transaksi->getTransaksi($keyword);
+        $newData = [];
+
+        foreach ($data as $value) {
+            if ($value->pelanggan != null) {
+              $newData[] = $value;
+            }
+        }
 
         return $this->formatResponse(
             'Berhasil mengambil seluruh transaksi',
-            $data,
+            $newData,
             200
         );
     }
